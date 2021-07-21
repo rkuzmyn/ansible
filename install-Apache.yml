@@ -1,0 +1,17 @@
+---
+- name: Install default Apache Server
+  hosts: centos
+
+  tasks:
+  - name: Install Apache WebServer
+    yum: name=httpd state=latest
+
+  - name: Start Apache and enable it the every boot
+    service: name=httpd state=started enabled=yes
+
+  - name: Add firewall role
+    command: firewall-cmd --zone=public --permanent --add-service=http
+    command: firewall-cmd --zone=public --permanent --add-service=https
+    command: firewall-cmd --reload
+
+

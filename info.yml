@@ -1,0 +1,25 @@
+---
+- name: Information about my servers
+  hosts: all
+
+  tasks:
+  
+  - debug:
+      var: ansible_os_family
+  - debug:
+      var: ansible_distribution
+  - debug:
+      var: ansible_system_vendor
+  - debug:
+      var: ansible_virtualization_type
+  - debug:
+      var: ansible_processor
+  - debug:
+      var: ansible_all_ipv4_addresses
+
+  - shell: uptime
+    register: results
+  - debug:
+      var: results.stdout
+
+    

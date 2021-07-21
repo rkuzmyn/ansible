@@ -1,0 +1,28 @@
+---
+- name: Install Apache and Upload my Web page
+  hosts: centos
+
+  vars:
+    source_file: /home/lex/ansible/website/index.html
+    destin_file: /var/www/html
+
+  tasks:
+  - name: Install Apache Web Server
+    yum: name=httpd state=latest
+
+  - name: Copy my WebPage to Servers
+    copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+    notify: Restart Apache
+
+  - name: Add firewall role
+    command: firewall-cmd --zone=public --permanent --add-service=http
+    command: firewall-cmd --zone=public --permanent --add-service=https
+    command: firewall-cmd --reload
+
+  - name: Start Web Server and make it enable on boot
+    service: name=httpd state=started enabled=yes
+
+  handlers:
+  - name: Restart Apache
+    service: name=httpd state=restarted
+
