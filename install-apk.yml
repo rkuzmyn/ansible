@@ -1,0 +1,24 @@
+---
+- name: Install APK
+  hosts: all
+  become: yes
+  
+  tasks:
+  - name: Check and print linux version
+    debug: var=ansible_os_family
+
+  tasks:
+   - name: Install APK
+     yum: name=qemu-guest-agent state=latest
+     when: ansible_os_family == "RedHat"
+
+#   - name: Start qemu-guest-agent and enable it the every boot
+#     service: name=qemu-guest-agent state=started enabled=yes
+#     when: ansible_os_family == "RedHat"
+
+############### FOR WEB SERVERS###########################################
+#  - name: Add firewall role
+#    command: firewall-cmd --zone=public --permanent --add-service=http
+#    command: firewall-cmd --zone=public --permanent --add-service=https
+#    command: firewall-cmd --reload
+##########################################################################
