@@ -3,22 +3,45 @@
   hosts: all
   become: yes
   
+  vars:
+    source_file: ./website/index.html
+    destin_file: /var/www/htmp
+
   tasks:
   - name: Check and print linux version
     debug: var=ansible_os_family
 
-  tasks:
-   - name: Install APK
-     yum: name=qemu-guest-agent state=latest
-     when: ansible_os_family == "RedHat"
+  - block: #---------- for RedHat-------------------------- 
 
-#   - name: Start qemu-guest-agent and enable it the every boot
-#     service: name=qemu-guest-agent state=started enabled=yes
-#     when: ansible_os_family == "RedHat"
+       - name: Install APK RedHat
+         yum: name=httpd state=latest
 
-############### FOR WEB SERVERS###########################################
-#  - name: Add firewall role
-#    command: firewall-cmd --zone=public --permanent --add-service=http
-#    command: firewall-cmd --zone=public --permanent --add-service=https
-#    command: firewall-cmd --reload
-##########################################################################
+       - name: Copy HomePage file to WebServer
+         copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+         notify: Restart Apache RedHat
+
+       - name: Start Web Server service for RedHat
+         service: name=httpd state=started eneble=yes
+    when: ansible_os_family == "RedHat"
+#------------------------------------------------------------
+
+  - block: #---------- for Debian-------------------------- 
+
+       - name: Install APK Debian
+         yum: name=apache2 state=latest
+
+       - name: Copy HomePage file to WebServer
+         copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+         notify: Restart Apache Debian
+
+       - name: Start Web Server service for Debian
+         service: name=apache2 state=started eneble=yes
+    when: ansible_os_family == "Debian"
+#------------------------------------------------------------
+
+#-----------------FOR WEB SERVERS---------------------------------------
+  - name: Add firewall role
+    command: firewall-cmd --zone=public --permanent --add-service=http
+    command: firewall-cmd --zone=public --permanent --add-service=https
+    command: firewall-cmd --reload
+#-----------------------------------------------------------------------
