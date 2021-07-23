@@ -3,9 +3,9 @@
   hosts: all
 # become: yes
   
-# vars:
-#   source_file: ./website/index.html
-#   destin_file: /var/www/htmp
+  vars:
+    source_file: /home/lex/ansible/website/index.html
+    destin_file: /var/www/html
 
   tasks:
 # - name: Check and print linux version
@@ -14,17 +14,20 @@
   - name: Install Apache RedHat
     yum: name=httpd state=latest
 
-#      - name: Copy HomePage file to WebServer
-#        copy: src={{ source_file }} dest={{ destin_file }} mode=0555
-#        notify: Restart Apache RedHat
-
   - name: Start Web Server service for RedHat
     service: name=httpd state=started enabled=yes
 #   when: ansible_os_family == "RedHat"
 
+  - name: Copy HomePage file to WebServer
+    copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+    notify: Restart Apache RedHat
 
   - name: Add firewall role
     command: firewall-cmd --zone=public --permanent --add-service=http
     command: firewall-cmd --zone=public --permanent --add-service=https
     command: firewall-cmd --reload
+  
+  handlers:
+  - name: Restart Apache RedHat
+    service: name=httpd state=restarted
     
