@@ -1,0 +1,26 @@
+---
+- name: variables-lesson
+  hosts: all
+# become: yes
+  
+  vars:
+     message1  : Hello
+     message2  : How are you?
+     name_user : Roman
+    
+  tasks:
+  
+  - name: Print message1  
+    debug:
+      var: message1
+      var: message2  
+      var: name_user  
+  
+  - debug:
+      msg: "{{ message1 }} {{ name_user }}. {{ message2 }}"
+
+  - set_fact: full_message="{{ message1 }}, {{ message2 }}"
+
+  - debug:
+      var: full_message
+    
