@@ -21,6 +21,16 @@
 
   - debug:
       var: full_message
-
   
- 
+  - debug:
+      var: ansible_os_family
+
+  - debug:
+      var: ansible_distribution
+  
+  - shell: uptime
+    register: results #записати змінну під ім'ям results
+  
+  - debug:
+      var: results.stdout # З results вибрати тільки параметр stdout
+
