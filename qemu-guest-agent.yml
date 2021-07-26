@@ -7,18 +7,16 @@
   - name: Check and print linux version
     debug: var=ansible_os_family
 
-  tasks:
   - name: Install agent for RedHat
-    yum: name=qemu-guest-agent state=latest
+    yum: name=qemu-guest-agent state=latest #removed, absent, installed або latest     
     when: ansible_os_family == "RedHat"
 
   - name: Start agent and enable it the every boot
     service: name=qemu-guest-agent state=started enabled=yes
     when: ansible_os_family == "RedHat"
 
-  tasks:
   - name: Install agent for Debian
-    apt: name=qemu-guest-agent state=latest
+    apt: name=qemu-guest-agent state=latest #removed, absent, installed або latest
     when: ansible_os_family == "Debian"
 
   - name: Start agent and enable it the every boot
