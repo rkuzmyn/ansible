@@ -1,0 +1,29 @@
+---
+- name: Loops playbook
+  hosts: debian
+# become: yes
+
+  tasks:
+  - name: Say Hello to all
+    debug: msg="Hello {{ item }}"
+    loop: 
+      - "name1"
+      - "name2"
+      - "name3"
+
+  - name: Loop Until example 
+    shell: echo -n Z >> myfile.txt && cat myfile.txt #додає букву в файл не роблячи новий рядок (-n), і виводить його на екран
+    register: output # записати в змінну output
+    delay: 1 # затримка між запитами 2 сек
+    retries: 10 #скільки разів повторити. По замовчуванню 3
+    until: output.stdout.find("ZZZZ") == false #запуск loop поки в файі не буде 4 букви Z
+
+  - name: Print final output
+    debug:
+      var: output.stdout
+
+  - name: Install package
+    apt: name={{ item }} state=latest
+    loop:
+      - nano
+      - mc
