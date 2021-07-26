@@ -1,33 +1,56 @@
 ---
 - name: Install Apache
   hosts: all
-# become: yes
-  
+  become: yes
+
   vars:
-    source_file: /home/lex/ansible/website/index.html
-    destin_file: /var/www/html
+   source_folder: /home/lex/ansible/website
+   destin_folder: /var/www/html
 
   tasks:
-# - name: Check and print linux version
-#   debug: var=ansible_os_family
+  - name: Check and print linux version
+    debug: var=ansible_os_family
 
-  - name: Install Apache RedHat
-    yum: name=httpd state=latest
+  - block: #----------------Block fot RedHat-----------------------------------
+      - name: Install Apache for RedHat
+        yum: name=httpd state=latest #removed, absent, installed або latest     
 
-  - name: Start Web Server service for RedHat
-    service: name=httpd state=started enabled=yes
-#   when: ansible_os_family == "RedHat"
+      - name: Start Apache and enable it the every boot
+        service: name=httpd state=started enabled=yes
+      
+      - name: Add firewall role
+        command: firewall-cmd --zone=public --permanent --add-service=http
+        command: firewall-cmd --zone=public --permanent --add-service=https
+        command: firewall-cmd --reload
+    when: ansible_os_family == "RedHat"
 
-  - name: Copy HomePage file to WebServer
-    copy: src={{ source_file }} dest={{ destin_file }} mode=0555
-    notify: Restart Apache RedHat
+  - block: #----------------Block fot Debian-----------------------------------
+      - name: Install Apache for Debian
+        apt: name=apache2 state=latest #removed, absent, installed або latest     
 
-  - name: Add firewall role
-    command: firewall-cmd --zone=public --permanent --add-service=http
-    command: firewall-cmd --zone=public --permanent --add-service=https
-    command: firewall-cmd --reload
-  
+      - name: Start Apache and enable it the every boot
+        service: name=apache2 state=started enabled=yes
+    when: ansible_os_family == "Debian"
+#------------------------------------------------------------------------------
+   
+  - name: Copy HomePage to WebServer
+    copy: src={{ item }} dest={{ destin_folder }} mode=0555
+    with_fileglob: "{{ source_folder }}/*.*"
+#--------------Можемо перерахувати файли поіменно------------------------------    
+#   copy: src={{ source_folder }}/{{ item }} dest={{ destin_folder }} mode=0555
+#   loop:
+#      - "index.html"
+#      - "fon.png"
+#------------------------------------------------------------------------------    
+    notify: 
+     - Restart Apache RedHat
+     - Restart Apache Debian
+
   handlers:
   - name: Restart Apache RedHat
     service: name=httpd state=restarted
-    
+    when: ansible_os_family == "RedHat"
+
+  - name: Restart Apache Debian
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Debian"
