@@ -5,6 +5,8 @@
   tasks:
   
   - debug:
+      var: ansible_hostname
+  - debug:
       var: ansible_os_family
   - debug:
       var: ansible_distribution
@@ -21,5 +23,4 @@
     register: results
   - debug:
       var: results.stdout
-
-    
+      
