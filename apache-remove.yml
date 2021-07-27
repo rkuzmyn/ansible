@@ -3,13 +3,9 @@
   hosts: all
   become: yes
 
-  vars:
-   source_folder: /home/lex/ansible/website
-   destin_folder: /var/www/html
-
   tasks:
-  - name: Check and print linux version
-    debug: var=ansible_os_family
+# - name: Check and print linux version
+#   debug: var=ansible_os_family
 
   - block: #----------------Block fot RedHat-----------------------------------
       - name: Remove Apache for RedHat
@@ -21,11 +17,7 @@
         apt: name=apache2 state=absent #removed, absent, installed або latest     
     when: ansible_os_family == "Debian"
 #------------------------------------------------------------------------------
-  - name: Removing existing folder
-    file:
-      path: /var/www
-      state: absent 
-
-  - name: Reboot server 
-    shell: reboot
-    
+# - name: Removing existing folder
+#    file:
+#      path: /var/www
+#      state: absent 
