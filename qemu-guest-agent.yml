@@ -26,3 +26,5 @@
 
     when: ansible_os_family == "Debian"
 #------------------------------------------------------------------------------
+# apt install qemu-guest-agent
+# systemctl start qemu-guest-agent
