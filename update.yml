@@ -1,0 +1,22 @@
+---
+- name: Install update for linux systems
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Check and print linux version
+    debug: var=ansible_os_family
+
+  - block: #----------------Block fot RedHat-----------------------------------
+
+      - name: Install udtate fo  RedHat family
+        command: yum update -y    
+    when: ansible_os_family == "RedHat"
+
+  - block: #----------------Block fot Debian-----------------------------------
+
+      - name: Install update for Debian family
+        command: apt update -y
+        command: apt upgrade -y
+    when: ansible_os_family == "Debian"
+#------------------------------------------------------------------------------

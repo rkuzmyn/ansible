@@ -1,0 +1,19 @@
+---
+- name: Install PHP
+  hosts: clients
+  become: yes
+
+  tasks:
+  - name: Check and print linux version
+    debug: var=ansible_os_family
+
+  - block: #----------------Block fot RedHat-----------------------------------
+      - name: Install PHP for RedHat
+        yum: name=php state=latest #removed, absent, installed або latest     
+    when: ansible_os_family == "RedHat"
+
+  - block: #----------------Block fot Debian-----------------------------------
+      - name: Install PHP for Debian
+        apt: name=php state=latest #removed, absent, installed або latest
+    when: ansible_os_family == "Debian"
+#------------------------------------------------------------------------------
