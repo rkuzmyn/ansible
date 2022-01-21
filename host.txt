@@ -1,0 +1,22 @@
+#######[windows]#############################################
+#wds ansible_host=10.10.10.26
+
+#example comand - ansible windows -m win_ping --ask-pass
+#############################################################
+
+
+[redhat]
+client-CentOS ansible_host=10.10.10.41
+
+[debian]
+client-Ubuntu ansible_host=10.10.10.42
+
+[linux:children]
+redhat
+debian
+
+
+
+
+ 
+
